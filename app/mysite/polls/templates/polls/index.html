@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Planner</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .slider-value {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Budget Planner</h1>
+        <form id="budget-form">
+            <div class="form-group">
+                <label for="income">Income:</label>
+                <input type="number" class="form-control" id="income" placeholder="Enter your income" required>
+            </div>
+            <div class="form-group">
+                <label for="rent-slider">Percentage of Income for Rent:</label>
+                <input type="range" class="form-control-range" id="rent-slider" min="0" max="100" step="1" value="50">
+                <span class="slider-value" id="rent-value">50%</span>
+            </div>
+            <div class="form-group">
+                <label for="savings-slider">Percentage of Income for Savings:</label>
+                <input type="range" class="form-control-range" id="savings-slider" min="0" max="100" step="1" value="20">
+                <span class="slider-value" id="savings-value">20%</span>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="gym-checkbox">
+                <label class="form-check-label" for="gym-checkbox">Gym Membership</label>
+            </div>
+            <div class="form-group mt-3">
+                <label for="nights-out">Nights Out:</label>
+                <input type="number" class="form-control" id="nights-out" min="0" max="31" step="1" value="0">
+            </div>
+            <button type="button" class="btn btn-primary" id="calculate-button">Calculate</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Update the slider values in real-time
+        document.getElementById('rent-slider').addEventListener('input', function() {
+            document.getElementById('rent-value').textContent = this.value + '%';
+        });
+        document.getElementById('savings-slider').addEventListener('input', function() {
+            document.getElementById('savings-value').textContent = this.value + '%';
+        });
+
+        // Calculate button event listener
+        document.getElementById('calculate-button').addEventListener('click', function() {
+            const income = parseFloat(document.getElementById('income').value);
+            const rentPercentage = parseFloat(document.getElementById('rent-slider').value);
+            const savingsPercentage = parseFloat(document.getElementById('savings-slider').value);
+            const gymChecked = document.getElementById('gym-checkbox').checked;
+            const nightsOut = parseInt(document.getElementById('nights-out').value);
+
+            if (isNaN(income) || income <= 0) {
+                alert('Please enter a valid income.');
+                return;
+            }
+
+            // Prepare data to be sent
+            const data = {
+                income: income,
+                rentPercentage: rentPercentage,
+                savingsPercentage: savingsPercentage,
+                gymChecked: gymChecked,
+                nightsOut: nightsOut
+            };
+
+            // Send data using fetch API
+            fetch('http://127.0.0.1:8000/polls/display', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
