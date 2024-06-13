@@ -38,7 +38,7 @@
                 <label for="nights-out">Nights Out:</label>
                 <input type="number" class="form-control" id="nights-out" min="0" max="31" step="1" value="0">
             </div>
-            <button type="button" class="btn btn-primary" id="calculate-button">Calculate</button>
+            <button type="submit" class="btn btn-primary">Calculate</button>
         </form>
     </div>
 
@@ -56,8 +56,10 @@
             document.getElementById('savings-value').textContent = this.value + '%';
         });
 
-        // Calculate button event listener
-        document.getElementById('calculate-button').addEventListener('click', function() {
+        // Handle form submission
+        document.getElementById('budget-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
             const income = parseFloat(document.getElementById('income').value);
             const rentPercentage = parseFloat(document.getElementById('rent-slider').value);
             const savingsPercentage = parseFloat(document.getElementById('savings-slider').value);
@@ -79,7 +81,7 @@
             };
 
             // Send data using fetch API
-            fetch('http://127.0.0.1:8000/polls/display', {
+            fetch('http://127.0.0.1:8000/polls/display/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -88,7 +90,9 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -96,3 +100,4 @@
         });
     </script>
 </body>
+</html>
