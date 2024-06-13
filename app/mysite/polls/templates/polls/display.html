@@ -8,16 +8,52 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    
+    <div class="container mt-5">
+        <h1>Inner City Living</h1>
+    </div>
+
+    {% for c in inner %}
+
     <div class="container mt-5">
         <div class="card" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">{{ city_name }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Rent: ${{ rent }}</h6>
-                <p class="card-text">Price of Beer: ${{ beer_price }}</p>
+                <h5 class="card-title">{{ c.city }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Rent: ${{ c.rent }}</h6>
+                <p class="card-text">Price of Beer: ${{ c.beer }}</p>
+
+                {% if c.gym_bool == 1 %}
+                <p class="card-text">Price of gym: ${{ c.gym }}</p>
+                {% endif %}
             </div>
         </div>
     </div>
+
+    {% endfor %}
+
+
+    <hr>
+
+    <div class="container mt-5">
+        <h1>Suburb Living</h1>
+    </div>
+
+    {% for c in outer %}
+
+    <div class="container mt-5">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{ c.city }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Rent: ${{ c.rent }}</h6>
+                <p class="card-text">Price of Beer: ${{ c.beer }}</p>
+                {% if c.gym_bool == 1 %}
+                <p class="card-text">Price of gym: ${{ c.gym }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

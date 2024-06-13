@@ -17,13 +17,14 @@ colI = {
     "util":40,
     "internet":42,
     "gym":43,
-    "1-bed-rent":53,
+    "rent-inner":52,
+    "rent-outer":53,
 }
 
 UkCities = []
 
-#path = 'C:/Users/schof/PeregrineHackathon/app/mysite/polls/cost-of-living.csv'
-path = 'C:/Users/TomSchofield/PeregrineHackathon/app/mysite/polls/cost-of-living.csv'
+path = 'C:/Users/schof/PeregrineHackathon/app/mysite/polls/cost-of-living.csv'
+# path = 'C:/Users/TomSchofield/PeregrineHackathon/app/mysite/polls/cost-of-living.csv'
 # Open the CSV file in read mode
 with open(path, 'r') as csvfile:
 # Create a reader object
@@ -56,30 +57,120 @@ def display(request):
 
     else:
         body = request.session.get('form_body', None)
-        income = body['income'] * 1.28
-        rentPercentage = body['rentPercentage']
-        savingsPercentage = body['savingsPercentage']
-        gymChecked = body['gymChecked']
-        nightsOut = body['nightsOut']
         
-        print(income) 
-            
-        rentAmount = (income * rentPercentage) / 100
-        savingsAmount = (income * savingsPercentage) / 100
-        
-        results = []
-
-        for row in UkCities:
-            if row[colI["1-bed-rent"]] != '':
-                if float(row[colI["1-bed-rent"]]) <= rentAmount/12:
-                    line = [row[colI["city"]], row[colI["1-bed-rent"]], row[colI["beer"]]]
-                    results.append(line)
-                
+        inner =  findInner(body)
+        outer = findOuter(body)
         context = {
-            'city_name': results[0][0],
-            'rent': results[0][1],
-            'beer_price': results[0][2]
+            "inner":inner,
+            "outer":outer
         }
 
         return render(request, 'polls/display.html', context)
+
+
+def findInner(body):
+    cities = []
+    
+    income = body['income'] * 1.28
+    rentPercentage = body['rentPercentage']
+    savingsPercentage = body['savingsPercentage']
+    gymChecked = body['gymChecked']
+    transportChecked = body['transportChecked']
+    nightsOut = body['nightsOut']            
+    rentAmount = (income * rentPercentage) / 100
+    savingsAmount = (income * savingsPercentage) / 100
+    
+    monthRent = rentAmount/12
+    monthincome = income / 12
+        
+    for city in UkCities:
+        total = (savingsAmount/12) + f_Num(city,colI["util"]) + f_Num(city,colI["rent-inner"]) + f_Num(city,colI["internet"])
+        total = total + f_Num(city,colI["beer"])*nightsOut*3 # assume 3 drinks a night
+        if(gymChecked):
+            total = total + f_Num(city,colI['gym'])
+            
+        if(transportChecked):
+            total = total + f_Num(city,colI['buss_p'])
+            
+        if total < monthincome:
+            if monthRent > f_Num(city,colI["rent-inner"]) and f_Num(city,colI["rent-inner"]) != 0:
+                instance = {
+                    'city':city[colI["city"]],
+                    'beer':f_Num(city,colI["beer"]),
+                    'gym':f_Num(city,colI['gym']),
+                    'gym_bool':False,
+                    'rent':f_Num(city,colI["rent-inner"]),
+                    'util':f_Num(city,colI["util"]),
+                    'internet':f_Num(city,colI["internet"]),
+                    'transport':f_Num(city,colI['buss_p']),
+                    'transport_bool':False
+                }
+            
+                if(gymChecked):
+                    instance['gym_bool'] = True
+                    
+                if(transportChecked):
+                    instance['transport'] = True
+                    
+                cities.append(instance)
+    
+    return cities                
+            
+        
+    
+def findOuter(body):
+    cities = []
+    
+    income = body['income'] * 1.28
+    rentPercentage = body['rentPercentage']
+    savingsPercentage = body['savingsPercentage']
+    gymChecked = body['gymChecked']
+    transportChecked = body['transportChecked']
+    nightsOut = body['nightsOut']            
+    rentAmount = (income * rentPercentage) / 100
+    savingsAmount = (income * savingsPercentage) / 100
+    
+    monthRent = rentAmount/12
+    monthincome = income / 12
+        
+    for city in UkCities:
+        total = (savingsAmount/12) + f_Num(city,colI["util"]) + f_Num(city,colI['rent-outer']) + f_Num(city,colI["internet"])
+        total = total + f_Num(city,colI["beer"])*nightsOut*3 # assume 3 drinks a night
+        if(gymChecked):
+            total = total + f_Num(city,colI['gym'])
+            
+        if(transportChecked):
+            total = total + f_Num(city,colI['buss_p'])
+            
+        if total < monthincome:
+            if monthRent < f_Num(city,colI["rent-inner"]) and monthRent > f_Num(city,colI["rent-outer"]) and f_Num(city,colI["rent-inner"]) != 0 and f_Num(city,colI["rent-outer"]) != 0:
+                instance = {
+                    'city':city[colI["city"]],
+                    'beer':f_Num(city,colI["beer"]),
+                    'gym':f_Num(city,colI['gym']),
+                    'gym_bool':False,
+                    'rent':f_Num(city,colI["rent-outer"]),
+                    'util':f_Num(city,colI["util"]),
+                    'internet':f_Num(city,colI["internet"]),
+                    'transport':f_Num(city,colI['buss_p']),
+                    'transport_bool':False
+                }
+            
+                if(gymChecked):
+                    instance['gym_bool'] = True
+                    
+                if(transportChecked):
+                    instance['transport'] = True
+                    
+                cities.append(instance)
+    
+    return cities   
+
+def f_Num(city, index):
+    if city[index] == '':
+        return 0
+    else:
+        return float(city[index])
+    
+    
 
