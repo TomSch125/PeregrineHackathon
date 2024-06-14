@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Inner City Living</h1>
+        <h1>Inner City / Town Living</h1>
     </div>
 
     {% for c in inner %}
@@ -18,11 +18,20 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{ c.city }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Rent: ${{ c.rent }}</h6>
-                <p class="card-text">Price of Beer: ${{ c.beer }}</p>
+                <p class="card-text">Annual</h3>
+                <p class="card-text" >Income After Tax: £{{ c.income }}</p>
+                <p class="card-text" >Savings: £{{ c.saved }}</p>
+                <p class="card-text" >Rent: £{{ c.rent }}</p>
+                <p class="card-text">Utilities: £{{ c.util }}</p>
+                <p class="card-text">Internet: £{{ c.internet }}</p>
+                <p class="card-text">Disposable income and food money: £{{ c.disposable }}</p>
 
+                <p class="card-text">Pint of Beer: £{{ c.beer }}</p>
                 {% if c.gym_bool == 1 %}
-                <p class="card-text">Price of gym: ${{ c.gym }}</p>
+                <p class="card-text">Price of gym: £{{ c.gym }}</p>
+                {% endif %}
+                {% if c.transport_bool == 1 %}
+                <p class="card-text">Price of Transport Pass: £{{ c.transport }}</p>
                 {% endif %}
             </div>
         </div>
@@ -39,14 +48,25 @@
 
     {% for c in outer %}
 
+
     <div class="container mt-5">
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{ c.city }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Rent: ${{ c.rent }}</h6>
-                <p class="card-text">Price of Beer: ${{ c.beer }}</p>
+                <p class="card-text">Annual</h3>
+                <p class="card-text" >Income After Tax: £{{ c.income }}</p>
+                <p class="card-text" >Savings: £{{ c.saved }}</p>
+                <p class="card-text" >Rent: £{{ c.rent }}</p>
+                <p class="card-text">Utilities: £{{ c.util }}</p>
+                <p class="card-text">Internet: £{{ c.internet }}</p>
+                <p class="card-text">Disposable income and food money: £{{ c.disposable }}</p>
+
+                <p class="card-text">Pint of Beer: £{{ c.beer }}</p>
                 {% if c.gym_bool == 1 %}
-                <p class="card-text">Price of gym: ${{ c.gym }}</p>
+                <p class="card-text">Price of gym: £{{ c.gym }}</p>
+                {% endif %}
+                {% if c.transport_bool == 1 %}
+                <p class="card-text">Price of Transport Pass: £{{ c.transport }}</p>
                 {% endif %}
             </div>
         </div>
